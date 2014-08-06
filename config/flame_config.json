@@ -10,12 +10,12 @@
     "log_repo_ondevices": "some_where_on_device",
     "work_dir": "work_dir_on_device",
     "logs": {
-        "logcat": "true",
-        "b2g-ps": "true",
-        "b2g-info": "true",
-        "b2g-procrank": "true",
-        "dumpstate": "true",
-        "crash-report": "true",
+        "logcat": True,
+        "b2g-ps": True,
+        "b2g-info": True,
+        "b2g-procrank": True,
+        "dumpstate": True,
+        "crash-report": True,
         "period": 60
     }
 }
