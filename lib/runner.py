@@ -3,6 +3,7 @@
 # You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import os
+import sys
 from datetime import datetime, timedelta
 
 from env_setup import DeviceOperator
@@ -50,3 +51,5 @@ class Runner(object):
 
 ## TODO: Main for testing purpose
 
+if __name__ == '__main__':
+    pass

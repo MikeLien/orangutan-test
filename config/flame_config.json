@@ -3,10 +3,19 @@
     "script_repo": "script/flame_script",
     "device_name": "flame",
     "resolution": "fwvga",
-    "res_x":480,
-    "res_y":854,
-    "event":"/dev/input/event0",
-    "execution_time":1,
-    "log_repo_ondevices":"some_where_on_device",
-    "work_dir":"work_dir_on_device"
+    "res_x": 480,
+    "res_y": 854,
+    "event": "/dev/input/event0",
+    "execution_time": 1,
+    "log_repo_ondevices": "some_where_on_device",
+    "work_dir": "work_dir_on_device",
+    "logs": {
+        "logcat": "true",
+        "b2g-ps": "true",
+        "b2g-info": "true",
+        "b2g-procrank": "true",
+        "dumpstate": "true",
+        "crash-report": "true",
+        "period": 60
+    }
 }

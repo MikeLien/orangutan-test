@@ -9,7 +9,7 @@ import sys
 class Parser(object):
 
     @staticmethod
-    def pvtArgParse(input):
+    def parser(input):
         parser = argparse.ArgumentParser(description='Orangutan Test Tool by TWQA')
         parser.add_argument('--config', help='repo of config file')
         parser.add_argument('--output-folder', help='repo for saving logs')
@@ -21,7 +21,7 @@ class Parser(object):
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-        print Parser.pvtArgParse(sys.argv[1:])
+        print Parser.parser(sys.argv[1:])
     else:
         testSample = ["--config", "testConfig"]
-        print Parser.pvtArgParse(testSample)
+        print Parser.parser(testSample)
