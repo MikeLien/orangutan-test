@@ -166,5 +166,6 @@ class GenRandomSC(object):
 
 def main():
 	getrandomsc = GenRandomSC()
+	
 if __name__ == '__main__':
 	main()
