@@ -1,8 +1,10 @@
 import random
 import os
+import sys
 import string
 from os import listdir, mkdir, chdir, getcwd
 from os.path import isdir, isfile, join
+from argparser import Parser
 
 class GenRandomSC(object):
 	def __init__(self, dimensions=[320,480], swipe_padding=[40,40,40,40], script_path="script"):
@@ -13,14 +15,18 @@ class GenRandomSC(object):
 		self.short_steps_duration = 200
 		self.long_steps_duration = 2000
 		self.range_sleep = 5.0
-		
+		options = Parser.parser(sys.argv[1:])
+		if 'config' in options:
+			with open(options.config) as f:
+				self.config = eval(f.read())
+
 	def gen_random_sc(self, amount=1, steps=10000):
 		cmd_list=["scroll_down", "scroll_up",
 					"swipe_left", "swipe_right",
 					"tap", "double_tap",
 					"drag", "pinch", "sleep"]
 		chdir(self.script_path)
-		scripts_folder = self.create_folder()
+		scripts_folder = self.create_folder(self.config['device_name'])
 		#mkdir(scripts_folder)
 		chdir(scripts_folder)
 		
@@ -30,26 +36,16 @@ class GenRandomSC(object):
 				output_file.write(self.get_cmd_events(random.choice(cmd_list))+'\n')
 			output_file.close()
 
-	'''
-	#TODO:
-	#	action:	create a continuous serial number file
-	#			serial number is 4 digits
-	#			serial number begins from 0001
-	#			extension is *.sc
-	#	return:	file name with file extension
 	def creat_file(self):
-	'''
+		count = len(os.listdir(os.getcwd()))
+		fileName = str(count+1).zfill(4)+".sc"
+		return fileName
 
-	'''
-	#TODO:
-	#	action:	create a continuous serial number folder
-	#			naming rule is $DEVICE_####
-	#			$DEVICE is device name and # is a digit number
-	#			serial number begins from 0001
-	#	return:	folder name
-	def create_folder(self):
-	'''
-
+	def create_folder(self,deviceName):		
+		count = len([f for f in listdir(getcwd()) if isdir(join(getcwd(), f))])
+		folderName = deviceName+"_"+str(count+1).zfill(4)
+		return folderName		
+	
 	def get_short_latency(self):
 		num_steps = random.randint(1,self.range_action_steps)
 		durations = random.randint(1,self.short_steps_duration)
@@ -168,4 +164,12 @@ def main():
 	getrandomsc = GenRandomSC()
 	
 if __name__ == '__main__':
-	main()
+	testSample = ["--config", "testConfig"]
+	if len(sys.argv) > 1:
+		options = Parser.parser(sys.argv[1:])
+		if 'config' in options:
+			main()
+		else:
+			print Parser.parser(testSample)
+	else:		
+		print Parser.parser(testSample)
