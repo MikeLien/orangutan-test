@@ -4,21 +4,30 @@
 
 import os
 import sys
+import threading
+import logging
 from datetime import datetime, timedelta
-
 from env_setup import DeviceOperator
+from argparser import Parser
+from log_collector import LogCollector
 
 class Runner(object):
 
-    def __init__(self, options, time):
+    def __init__(self, config, options):
         self.options = options
-        self.startTime = datetime.now()
+        self.config = config
+        self.scripts = getScripts(self.config['script_repo'])
 
-    def load_config(self, config_repo):
-        config = {}
-        with open(config_repo) as f:
-            self.config = eval(f.read())
-        return config
+        self.logCollector = LogCollector(self.config['device_name'], self.config['logs'])
+
+        self.forceStopped = False
+
+        # generate scripts
+
+        # Push binary and scripts onto device
+        self.device = DeviceOperator(self.config['work_dir'])
+        self.device.pushBinary(self.config['orangutan'], self.config['work_dir'])
+        self.device.pushScript(self.config['scripts_repo'], self.config['work_dir'])
 
     def getScripts(self, script_repo):
         scripts = []
@@ -27,29 +36,44 @@ class Runner(object):
                 scripts.extend(f)
         return scripts
 
-    def runner(self):
-        self.config = load_config(options['config'])
+    def run(self):
+        orng = os.path.join(self.config['work_dir'], self.config['orangutan'])
+        command = ['adb', 'shell', orng, self.config['event'], 'script_place_holder']
 
-        ## TODO: check if need to generate scripts
+        for script in self.scripts:
+            if not self.forceStopped:
+                logging.info("Trigger Script: " + script)
+                command[-1] = os.path.join(self.config['work_dir'], script)
+                self.currentProcess = subprocess.Popen(command)
 
-        scripts = getScripts(self.config['script_repo'])
+    def stopRunning(self):
+        self.forceStopped = True
+        self.currentProcess.terminate()
+        logging.info("Force Stop")
 
-        self.device = DeviceOperator(self.config['work_dir'])
-        self.device.pushBinary(self.config['orngutan'], self.config['work_dir'])
-        self.device.pushScript(self.config['scripts_repo'], self.config['work_dir'])
+    def collectLog(self):
+        self.logCollector.getLogs()
+        
+def load_config(self, config_repo):
+    config = {}
+    with open(config_repo) as f:
+        self.config = eval(f.read())
+    return config
 
-        # Time check
+def main(argv):
+    options = Parser.parser(argv)
+    config = load_config(options['config'])
 
-        while datetime.now() < self.startTime + timedelta(hours=self.config['execution_time']):
-            # execution
-            ## TODO: create another process to monitor status
-            continue
+    startTime = datetime.now()
+    logging.info("Starting " + startTime.strftime("%Y/%m/%d %H:%M:%S"))
+    runningTime = timedelta(hours=config['execution_time']).total_seconds
 
-        ## TODO: Force close the subprocess
+    runner = Runner(config, options)
+    signal.signal(signal.SIGALRM, mtbf.stopRunning)
+    signal.alarm(mtbf.runningTime)
 
-        ## TODO: Collect log
-
-## TODO: Main for testing purpose
+    logging.info("Orangutan Test is Done at " + datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
 
 if __name__ == '__main__':
-    pass
+    if len(sys.argv) > 1:
+        main(sys.argv[1:])

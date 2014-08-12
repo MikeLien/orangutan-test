@@ -36,15 +36,15 @@ class LogCollector(object):
     def getLogs(self):
         curTime = time.strftime('%m%d%H%M%S', time.localtime())
         if self.option['b2g-ps']:
-            log_b2g_ps(curTime)
+            self.log_b2g_ps(curTime)
         if self.option['b2g-info']:
-            log_b2g_info(curTime)
+            self.log_b2g_info(curTime)
         if self.option['b2g-procrank']:
-            log_b2g_proprank(curTime)
+            self.log_b2g_proprank(curTime)
         if self.option['dumpstate']:
-            log_dumpstate(curTime)
+            self.log_dumpstate(curTime)
         if self.option['crash-report']:
-            log_crash_report()
+            self.log_crash_report()
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
