@@ -3,14 +3,16 @@ import os
 import sys
 import string
 from os import listdir, mkdir, chdir, getcwd
-from os.path import isdir, isfile, join
+from os.path import isdir, isfile, join, exists
 from argparser import Parser
 
 class GenRandomSC(object):
-	def __init__(self, dimensions=[320,480], swipe_padding=[40,40,40,40], script_path="script"):
+	def __init__(self, dimensions=[320,480], swipe_padding=[40,40,40,40], script_repo="script", amount=1, steps=10000):
 		self.dimensions = dimensions
 		self.swipe_padding = swipe_padding
-		self.script_path = script_path
+		self.script_repo = script_repo
+		self.amount = amount
+		self.steps = steps
 		self.range_action_steps = 10
 		self.short_steps_duration = 200
 		self.long_steps_duration = 2000
@@ -19,20 +21,28 @@ class GenRandomSC(object):
 		if 'config' in options:
 			with open(options.config) as f:
 				self.config = eval(f.read())
+				self.dimensions = [self.config['res_x'], self.config['res_y']]
+			if str(options.gen_scripts_output) == 'None':
+				self.script_repo = self.config['script_repo']
+			else:
+				self.script_repo = options.gen_scripts_output
+		if str(options.gen_scripts_amount) != 'None': self.amount = int(options.gen_scripts_amount)
+		if str(options.gen_scripts_steps) != 'None': self.steps = int(options.gen_scripts_steps)
 
-	def gen_random_sc(self, amount=1, steps=10000):
+	def gen_random_sc(self):
 		cmd_list=["scroll_down", "scroll_up",
 					"swipe_left", "swipe_right",
 					"tap", "double_tap",
 					"drag", "pinch", "sleep"]
-		chdir(self.script_path)
+		if not exists(self.script_repo): mkdir(self.script_repo)
+		chdir(self.script_repo)
 		scripts_folder = self.create_folder(self.config['device_name'])
-		#mkdir(scripts_folder)
+		if not exists(scripts_folder): mkdir(scripts_folder)
 		chdir(scripts_folder)
 		
-		for num_files in range(amount):
+		for num_files in range(self.amount):
 			output_file = open(self.creat_file(),"w")
-			for cmd_steps in range(steps):
+			for cmd_steps in range(self.steps):
 				output_file.write(self.get_cmd_events(random.choice(cmd_list))+'\n')
 			output_file.close()
 
@@ -160,15 +170,13 @@ class GenRandomSC(object):
 
 		return cmdevents
 
-def main():
-	getrandomsc = GenRandomSC()
-	
 if __name__ == '__main__':
 	testSample = ["--config", "testConfig"]
 	if len(sys.argv) > 1:
 		options = Parser.parser(sys.argv[1:])
 		if 'config' in options:
-			main()
+			getrandomsc = GenRandomSC()
+			getrandomsc.gen_random_sc()
 		else:
 			print Parser.parser(testSample)
 	else:		
