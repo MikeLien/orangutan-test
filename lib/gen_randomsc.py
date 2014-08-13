@@ -22,20 +22,22 @@ class GenRandomSC(object):
 			with open(options.config) as f:
 				self.config = eval(f.read())
 				self.dimensions = [self.config['res_x'], self.config['res_y']]
-			if str(options.gen_scripts_output) == 'None':
+			if not str(options.gen_scripts_output):
 				self.script_repo = self.config['script_repo']
 			else:
-				self.script_repo = options.gen_scripts_output
-		if str(options.gen_scripts_amount) != 'None': self.amount = int(options.gen_scripts_amount)
-		if str(options.gen_scripts_steps) != 'None': self.steps = int(options.gen_scripts_steps)
+				self.script_repo = str(options.gen_scripts_output)
+		if int(options.gen_scripts_amount): self.amount = int(options.gen_scripts_amount)
+		if int(options.gen_scripts_steps): self.steps = int(options.gen_scripts_steps)
 
 	def gen_random_sc(self):
 		cmd_list=["scroll_down", "scroll_up",
 					"swipe_left", "swipe_right",
 					"tap", "double_tap",
 					"drag", "pinch", "sleep"]
-		if not exists(self.script_repo): mkdir(self.script_repo)
-		chdir(self.script_repo)
+		for each_folder in self.script_repo.split('/'):
+			if each_folder:
+				if not exists(each_folder): mkdir(each_folder)
+				chdir(each_folder)
 		scripts_folder = self.create_folder(self.config['device_name'])
 		if not exists(scripts_folder): mkdir(scripts_folder)
 		chdir(scripts_folder)
