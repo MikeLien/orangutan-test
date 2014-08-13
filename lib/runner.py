@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 from env_setup import DeviceOperator
 from argparser import Parser
 from log_collector import LogCollector
+from gen_randomsc import GenRandomSC 
 
 class Runner(object):
 
@@ -23,6 +24,7 @@ class Runner(object):
         self.forceStopped = False
 
         # generate scripts
+        self.genScript = GenRandomSC().gen_random_sc()
 
         # Push binary and scripts onto device
         self.device = DeviceOperator(self.config['work_dir'])
