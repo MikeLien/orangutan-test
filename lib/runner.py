@@ -7,7 +7,7 @@ import sys
 import threading
 import logging
 from datetime import datetime, timedelta
-from env_setup import DeviceOperator
+from device_operator import DeviceOperator
 from argparser import Parser
 from log_collector import LogCollector
 from gen_randomsc import GenRandomSC 
