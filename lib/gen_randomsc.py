@@ -33,7 +33,7 @@ class GenRandomSC(object):
 	def gen_random_sc(self):
 		cmd_list=["scroll_down", "scroll_up",
 					"swipe_left", "swipe_right",
-					"tap", "double_tap",
+					"tap", "double_tap", "long_tap",
 					"drag", "pinch", "sleep"]
 		for each_folder in self.script_repo.split('/'):
 			if each_folder:
@@ -159,6 +159,8 @@ class GenRandomSC(object):
 				cmdevents = self.get_tap_event(*coord_1st, times=1, duration=short_latency[1])
 		elif cmd == "double_tap":
 			cmdevents = self.get_tap_event(*coord_1st, times=2)
+		elif cmd == "long_tap":
+			cmdevents = self.get_tap_event(*coord_1st, times=1, duration=self.long_steps_duration)
 		elif cmd == "pinch":
 			args = coord_1st + coord_2nd + coord_3rd + coord_4th + short_latency
 			cmdevents = self.get_pinch_event(*args)
