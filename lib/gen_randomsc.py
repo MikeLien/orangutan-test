@@ -35,6 +35,7 @@ class GenRandomSC(object):
 					"swipe_left", "swipe_right",
 					"tap", "double_tap", "long_tap",
 					"drag", "pinch", "sleep"]
+		orig_workdir = getcwd()
 		for each_folder in self.script_repo.split('/'):
 			if each_folder:
 				if not exists(each_folder): mkdir(each_folder)
@@ -48,6 +49,7 @@ class GenRandomSC(object):
 			for cmd_steps in range(self.steps):
 				output_file.write(self.get_cmd_events(random.choice(cmd_list))+'\n')
 			output_file.close()
+		chdir(orig_workdir)
 
 	def creat_file(self):
 		count = len(os.listdir(os.getcwd()))
