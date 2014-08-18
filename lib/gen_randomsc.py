@@ -1,9 +1,8 @@
 import random
 import os
 import sys
-import string
 from os import listdir, mkdir, chdir, getcwd
-from os.path import isdir, isfile, join, exists
+from os.path import isdir, join, exists
 from argparser import Parser
 
 class GenRandomSC(object):
