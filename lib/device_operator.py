@@ -3,6 +3,7 @@
 # You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import mozdevice
+import os
 
 class DeviceOperator(object):
 
@@ -12,10 +13,11 @@ class DeviceOperator(object):
         self.device.mkDir(work_dir)
 
     def pushBinary(self, local_file):
-        self.device.pushFile(local_file, self.work_dir)
+        remote_file = os.path.join(self.work_dir, os.path.basename(local_file))
+        self.device.pushFile(local_file, remote_file)
 
     def pushScript(self, local_repo):
-        self.device.pushFile(local_repo, self.work_dir)
+        self.device.pushDir(local_repo, self.work_dir)
 
     def getLog(self, local_repo):
         # download logs to local repo
