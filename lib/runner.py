@@ -7,28 +7,30 @@ import sys
 import threading
 import logging
 from datetime import datetime, timedelta
-from env_setup import DeviceOperator
+from device_operator import DeviceOperator
 from argparser import Parser
 from log_collector import LogCollector
+from gen_randomsc import GenRandomSC 
 
 class Runner(object):
 
     def __init__(self, config, options):
         self.options = options
         self.config = config
-        self.scripts = getScripts(self.config['script_repo'])
+        self.scripts = self.getScripts(self.config['script_repo'])
 
         self.logCollector = LogCollector(self.config['device_name'], self.config['logs'])
 
         self.forceStopped = False
 
         # generate scripts
-
+        self.genScript = GenRandomSC().gen_random_sc()
+        
         # Push binary and scripts onto device
         self.device = DeviceOperator(self.config['work_dir'])
         self.device.pushBinary(self.config['orangutan'], self.config['work_dir'])
         self.device.pushScript(self.config['scripts_repo'], self.config['work_dir'])
-
+        
     def getScripts(self, script_repo):
         scripts = []
         for dir_path, dir_names, dir_files in os.walk(script_repo):
@@ -54,15 +56,15 @@ class Runner(object):
     def collectLog(self):
         self.logCollector.getLogs()
         
-def load_config(self, config_repo):
+def load_config(config_repo):
     config = {}
     with open(config_repo) as f:
-        self.config = eval(f.read())
+        config = eval(f.read())
     return config
 
 def main(argv):
     options = Parser.parser(argv)
-    config = load_config(options['config'])
+    config = load_config(options.config)
 
     startTime = datetime.now()
     logging.info("Starting " + startTime.strftime("%Y/%m/%d %H:%M:%S"))

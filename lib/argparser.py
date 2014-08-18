@@ -12,7 +12,7 @@ class Parser(object):
     def parser(input):
         parser = argparse.ArgumentParser(description='Orangutan Test Tool by TWQA')
         parser.add_argument('--config',
-                            help='repo of config file')
+                            default='', help='repo of config file')
         parser.add_argument('--output-folder',
                             default='', help='repo for saving logs')
         parser.add_argument('--gen-scripts-amount',

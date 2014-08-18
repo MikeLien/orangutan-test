@@ -7,36 +7,40 @@ from os.path import isdir, isfile, join, exists
 from argparser import Parser
 
 class GenRandomSC(object):
-	def __init__(self, dimensions=[320,480], swipe_padding=[40,40,40,40], script_repo="script", amount=1, steps=10000):
+	def __init__(self, dimensions=[320,480], swipe_padding=[40,40,40,40], script_repo="script", amount=1, steps=10000, deviceName="Device"):
 		self.dimensions = dimensions
 		self.swipe_padding = swipe_padding
 		self.script_repo = script_repo
 		self.amount = amount
 		self.steps = steps
+		self.deviceName = deviceName
 		self.range_action_steps = 10
 		self.short_steps_duration = 200
 		self.long_steps_duration = 2000
 		self.range_sleep = 5.0
-		options = Parser.parser(sys.argv[1:])
-		if 'config' in options:
-			with open(options.config) as f:
-				self.config = eval(f.read())
-				self.dimensions = [self.config['res_x'], self.config['res_y']]
-			if str(options.gen_scripts_output) == 'None':
-				self.script_repo = self.config['script_repo']
-			else:
-				self.script_repo = options.gen_scripts_output
-		if str(options.gen_scripts_amount) != 'None': self.amount = int(options.gen_scripts_amount)
-		if str(options.gen_scripts_steps) != 'None': self.steps = int(options.gen_scripts_steps)
+		if len(sys.argv) > 1:
+			options = Parser.parser(sys.argv[1:])
+			if str(options.gen_scripts_output): self.script_repo = str(options.gen_scripts_output)
+			if str(options.config):
+				with open(options.config) as f:
+					self.config = eval(f.read())
+					self.dimensions = [self.config['res_x'], self.config['res_y']]
+					self.deviceName = self.config['device_name']
+					self.script_repo = self.config['script_repo']
+			if int(options.gen_scripts_amount): self.amount = int(options.gen_scripts_amount)
+			if int(options.gen_scripts_steps): self.steps = int(options.gen_scripts_steps)
 
 	def gen_random_sc(self):
 		cmd_list=["scroll_down", "scroll_up",
 					"swipe_left", "swipe_right",
-					"tap", "double_tap",
+					"tap", "double_tap", "long_tap",
 					"drag", "pinch", "sleep"]
-		if not exists(self.script_repo): mkdir(self.script_repo)
-		chdir(self.script_repo)
-		scripts_folder = self.create_folder(self.config['device_name'])
+		orig_workdir = getcwd()
+		for each_folder in self.script_repo.split('/'):
+			if each_folder:
+				if not exists(each_folder): mkdir(each_folder)
+				chdir(each_folder)
+		scripts_folder = self.create_folder(self.deviceName)
 		if not exists(scripts_folder): mkdir(scripts_folder)
 		chdir(scripts_folder)
 		
@@ -45,6 +49,7 @@ class GenRandomSC(object):
 			for cmd_steps in range(self.steps):
 				output_file.write(self.get_cmd_events(random.choice(cmd_list))+'\n')
 			output_file.close()
+		chdir(orig_workdir)
 
 	def creat_file(self):
 		count = len(os.listdir(os.getcwd()))
@@ -156,6 +161,8 @@ class GenRandomSC(object):
 				cmdevents = self.get_tap_event(*coord_1st, times=1, duration=short_latency[1])
 		elif cmd == "double_tap":
 			cmdevents = self.get_tap_event(*coord_1st, times=2)
+		elif cmd == "long_tap":
+			cmdevents = self.get_tap_event(*coord_1st, times=1, duration=self.long_steps_duration)
 		elif cmd == "pinch":
 			args = coord_1st + coord_2nd + coord_3rd + coord_4th + short_latency
 			cmdevents = self.get_pinch_event(*args)
@@ -171,13 +178,4 @@ class GenRandomSC(object):
 		return cmdevents
 
 if __name__ == '__main__':
-	testSample = ["--config", "testConfig"]
-	if len(sys.argv) > 1:
-		options = Parser.parser(sys.argv[1:])
-		if 'config' in options:
-			getrandomsc = GenRandomSC()
-			getrandomsc.gen_random_sc()
-		else:
-			print Parser.parser(testSample)
-	else:		
-		print Parser.parser(testSample)
+	getrandomsc = GenRandomSC().gen_random_sc()
