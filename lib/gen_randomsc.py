@@ -1,9 +1,8 @@
 import random
 import os
 import sys
-import string
 from os import listdir, mkdir, chdir, getcwd
-from os.path import isdir, isfile, join, exists
+from os.path import isdir, join, exists
 from argparser import Parser
 
 class GenRandomSC(object):
@@ -57,6 +56,7 @@ class GenRandomSC(object):
 				output_file.write(self.get_sleep_event(self.get_sleep_time(shortest=0.5))+'\n')
 			output_file.close()
 		chdir(orig_workdir)
+		return scripts_folder
 
 	def creat_file(self):
 		count = len(os.listdir(os.getcwd()))
