@@ -34,7 +34,8 @@ class GenRandomSC(object):
 		cmd_list=["scroll_down", "scroll_up",
 					"swipe_left", "swipe_right",
 					"tap", "double_tap", "long_tap",
-					"drag", "pinch", "sleep"]
+					"drag", "pinch", "sleep",
+					"tap_home", "long_tap_home"]
 		orig_workdir = getcwd()
 		for each_folder in self.script_repo.split('/'):
 			if each_folder:
@@ -43,11 +44,17 @@ class GenRandomSC(object):
 		scripts_folder = self.create_folder(self.deviceName)
 		if not exists(scripts_folder): mkdir(scripts_folder)
 		chdir(scripts_folder)
-		
+		skip_count=0
 		for num_files in range(self.amount):
 			output_file = open(self.creat_file(),"w")
-			for cmd_steps in range(self.steps):
-				output_file.write(self.get_cmd_events(random.choice(cmd_list))+'\n')
+			for cmd_steps in range(self.steps/2):
+				if skip_count > 0:
+					skip_count -= skip_count
+					continue
+				random_cmd = random.choice(cmd_list)
+				output_file.write(self.get_cmd_events(random_cmd)+'\n')
+				if random_cmd is "tap_home" or random_cmd is "long_tap_home": skip_count=2
+				output_file.write(self.get_sleep_event(self.get_sleep_time(shortest=0.5))+'\n')
 			output_file.close()
 		chdir(orig_workdir)
 
@@ -76,8 +83,8 @@ class GenRandomSC(object):
 		y = random.randint(0,self.dimensions[1]-1)
 		return (x, y)
 
-	def get_sleep_time(self):
-		return round(random.uniform(1, self.range_sleep),2)
+	def get_sleep_time(self, shortest=1, longest=2):
+		return round(random.uniform(shortest, longest),2)
 
 	def get_drag_event(self, touchstart_x1, touchstart_y1, touchend_x1,
 						touchend_y1, num_steps=10, duration=1000):
@@ -118,6 +125,9 @@ class GenRandomSC(object):
 													touch2_x2, touch2_y2,
 													numsteps,
 													duration)
+
+	def get_homekey_event(self, letency):
+		return "keydown 102\n" + self.get_sleep_event(float(letency)/1000) + "\nkeyup 102"
 
 	def get_cmd_events(self, cmd):
 		use_default = int(random.random()*10)%2
@@ -170,8 +180,12 @@ class GenRandomSC(object):
 			if use_default:
 				cmdevents = self.get_sleep_event()
 			else:
-				sleep_time = self.get_sleep_time()
+				sleep_time = self.get_sleep_time(longest=self.range_sleep)
 				cmdevents = self.get_sleep_event(sleep_time)
+		elif cmd == "tap_home":
+			cmdevents = self.get_homekey_event(self.short_steps_duration)
+		elif cmd == "long_tap_home":
+			cmdevents = self.get_homekey_event(self.long_steps_duration)
 		else:
 			raise Exception("Unknown command")
 
