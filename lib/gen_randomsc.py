@@ -46,8 +46,9 @@ class GenRandomSC(object):
 		
 		for num_files in range(self.amount):
 			output_file = open(self.creat_file(),"w")
-			for cmd_steps in range(self.steps):
+			for cmd_steps in range(self.steps/2):
 				output_file.write(self.get_cmd_events(random.choice(cmd_list))+'\n')
+				output_file.write(self.get_sleep_event(self.get_sleep_time(shortest=0.5))+'\n')
 			output_file.close()
 		chdir(orig_workdir)
 
@@ -76,8 +77,8 @@ class GenRandomSC(object):
 		y = random.randint(0,self.dimensions[1]-1)
 		return (x, y)
 
-	def get_sleep_time(self):
-		return round(random.uniform(1, self.range_sleep),2)
+	def get_sleep_time(self, shortest=1, longest=2):
+		return round(random.uniform(shortest, longest),2)
 
 	def get_drag_event(self, touchstart_x1, touchstart_y1, touchend_x1,
 						touchend_y1, num_steps=10, duration=1000):
@@ -170,7 +171,7 @@ class GenRandomSC(object):
 			if use_default:
 				cmdevents = self.get_sleep_event()
 			else:
-				sleep_time = self.get_sleep_time()
+				sleep_time = self.get_sleep_time(longest=self.range_sleep)
 				cmdevents = self.get_sleep_event(sleep_time)
 		else:
 			raise Exception("Unknown command")
