@@ -10,14 +10,19 @@ class DeviceOperator(object):
     def __init__(self, work_dir):
         self.device = mozdevice.DeviceManagerADB()
         self.work_dir = work_dir
+        try:
+            self.device.rmDir(work_dir)
+        except:
+            pass
         self.device.mkDir(work_dir)
 
     def pushBinary(self, local_file):
-        remote_file = os.path.join(self.work_dir, os.path.basename(local_file))
+        remote_file = os.path.join("/data/", os.path.basename(local_file))
         self.device.pushFile(local_file, remote_file)
 
-    def pushScript(self, local_repo):
-        self.device.pushDir(local_repo, self.work_dir)
+    def pushScript(self, local_file):
+        remote_file = os.path.join(self.work_dir, os.path.basename(local_file))
+        self.device.pushFile(local_file, remote_file)
 
     def getLog(self, local_repo):
         # download logs to local repo

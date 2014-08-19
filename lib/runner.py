@@ -24,39 +24,49 @@ class Runner(object):
     def __init__(self, config, options):
         self.options = options
         self.config = config
-        self.scripts = self.getScripts(self.config['script_repo'])
 
         self.logCollector = LogCollector(self.config['device_name'], self.config['logs'])
 
         self.forceStopped = False
 
+        self.device = DeviceOperator(self.config['work_dir'])
+        self.device.pushBinary(self.config['orangutan'])
+
         # generate scripts
-        self.genScript = GenRandomSC().gen_random_sc()
+        self.script_folder = self.config['script_repo']
+        if options.gen_scripts_amount > 0:
+            logger.info("Generate script for amount: %d" % options.gen_scripts_amount)
+            self.script_folder = GenRandomSC().gen_random_sc()
+        logger.info("Get scripts from script folder: %s" % self.script_folder)
+        self.getScripts(self.script_folder)
+        self.scripts = self.getScripts(self.script_folder)
         
         # Push binary and scripts onto device
         logger.info("Orangutan binary: %s" % self.config['orangutan'])
         logger.info("Orangutan work directory: %s" % self.config['work_dir'])
-
-        self.device = DeviceOperator(self.config['work_dir'])
-        self.device.pushBinary(self.config['orangutan'])
-        self.device.pushScript(self.config['script_repo'])
         
     def getScripts(self, script_repo):
         scripts = []
         for dir_path, dir_names, dir_files in os.walk(script_repo):
             for f in dir_files:
-                scripts.extend(f)
+                if f.endswith(".sc"):
+                    scripts.append(f)
+                    self.device.pushScript(os.path.join(dir_path, f))
+                    logger.info("script %s is in queue now" % f)
         return scripts
 
     def run(self):
-        orng = os.path.join(self.config['work_dir'], self.config['orangutan'])
+        orng = os.path.join('/data/', os.path.basename(self.config['orangutan']))
         command = ['adb', 'shell', orng, self.config['event'], 'script_place_holder']
 
+        logger.info("sciprt queue: %s" % self.scripts)
         for script in self.scripts:
             if not self.forceStopped:
                 logger.info("Trigger Script: " + script)
                 command[-1] = os.path.join(self.config['work_dir'], script)
+                logger.info("command: %s" % ' '.join(command))
                 self.currentProcess = subprocess.Popen(command)
+                self.currentProcess.wait()
 
     def stopRunning(self):
         self.forceStopped = True
@@ -86,6 +96,12 @@ def main(argv):
     runner = Runner(config, options)
     signal.signal(signal.SIGALRM, runner.stopRunning)
     signal.alarm(int(runningTime))
+
+    try:
+        runner.run()
+    except:
+        logger.warn("Orangutan Test failed occasionally")
+    signal.alarm(0)
 
     logger.info("Orangutan Test is Done at " + datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
 

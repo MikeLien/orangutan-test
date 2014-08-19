@@ -49,6 +49,7 @@ class GenRandomSC(object):
 				output_file.write(self.get_cmd_events(random.choice(cmd_list))+'\n')
 			output_file.close()
 		chdir(orig_workdir)
+		return scripts_folder
 
 	def creat_file(self):
 		count = len(os.listdir(os.getcwd()))

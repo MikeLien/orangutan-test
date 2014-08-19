@@ -1,6 +1,6 @@
 {
     "orangutan": "bin/orng",
-    "script_repo": "script/flame_script/",
+    "script_repo": "script/flame_script/flame_0001/",
     "device_name": "flame",
     "resolution": "fwvga",
     "res_x": 480,
@@ -8,7 +8,7 @@
     "event": "/dev/input/event0",
     "execution_time": 1,
     "log_repo_ondevices": "logs",
-    "work_dir": "/storage/sdcard0/orangutan/",
+    "work_dir": "/data/orangutan/",
     "logs": {
         "logcat": True,
         "b2g-ps": True,
