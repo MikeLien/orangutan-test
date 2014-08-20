@@ -15,6 +15,8 @@ class Parser(object):
                             default='', help='repo of config file')
         parser.add_argument('--output-folder',
                             default='', help='repo for saving logs')
+        parser.add_argument('--gen-scripts',
+                            default=False, help='trigger gen scripts')
         parser.add_argument('--gen-scripts-amount',
                             default=0, help='the amount of scripts')
         parser.add_argument('--gen-scripts-steps',
