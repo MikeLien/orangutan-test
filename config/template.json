@@ -1,0 +1,23 @@
+{
+    "orangutan": "#orangutan binary path#, e.g., bin/orng",
+    "script_repo": "#script output folder#, e.g., script/flame/",
+    "script_amount": #number of script files#,
+    "script_steps": #number of commands in one script#,
+    "device_name": "#device name#, e.g., flame",
+    "resolution": "#resolution type#, e.g., fwvga",
+    "res_x": #width of device screen#, e.g., 480,
+    "res_y": #height of device screen#, e.g., 854,
+    "event": "#device event path#, e.g., /dev/input/event0",
+    "execution_time": #execution hours#, e.g., 1,
+    "log_repo_ondevices": "#log folder on device#, e.g., logs",
+    "work_dir": "#working folder on device#, e.g., /data/orangutan/",
+    "logs": {
+        "logcat": #True/False#,
+        "b2g-ps": #True/Flase#,
+        "b2g-info": #True/False#,
+        "b2g-procrank": #True/False#,
+        "dumpstate": #True/False#,
+        "crash-report": #True/False#,
+        "period": #pulling time interval#, e.g., 60
+    }
+}

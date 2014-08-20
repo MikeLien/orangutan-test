@@ -19,15 +19,17 @@ class GenRandomSC(object):
 		self.range_sleep = 5.0
 		if len(sys.argv) > 1:
 			options = Parser.parser(sys.argv[1:])
-			if str(options.gen_scripts_output): self.script_repo = str(options.gen_scripts_output)
 			if str(options.config):
 				with open(options.config) as f:
 					self.config = eval(f.read())
 					self.dimensions = [self.config['res_x'], self.config['res_y']]
 					self.deviceName = self.config['device_name']
 					self.script_repo = self.config['script_repo']
+					self.amount = int(self.config['script_amount'])
+					self.steps = int(self.config['script_steps'])
 			if int(options.gen_scripts_amount): self.amount = int(options.gen_scripts_amount)
 			if int(options.gen_scripts_steps): self.steps = int(options.gen_scripts_steps)
+			if str(options.gen_scripts_output): self.script_repo = str(options.gen_scripts_output)
 
 	def gen_random_sc(self):
 		cmd_list=["scroll_down", "scroll_up",
