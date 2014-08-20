@@ -34,7 +34,7 @@ class Runner(object):
 
         # generate scripts
         self.script_folder = self.config['script_repo']
-        if options.gen_scripts_amount > 0:
+        if options.gen_scripts:
             logger.info("Generate script for amount: %d" % options.gen_scripts_amount)
             self.script_folder = GenRandomSC().gen_random_sc()
         logger.info("Get scripts from script folder: %s" % self.script_folder)
