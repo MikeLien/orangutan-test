@@ -35,10 +35,10 @@ class Runner(object):
         # generate scripts
         self.script_folder = self.config['script_repo']
         if options.gen_scripts:
+            if str(options.gen_scripts_output): self.script_folder = str(options.gen_scripts_output)
             logger.info("Generate script for amount: %d" % options.gen_scripts_amount)
-            self.script_folder = GenRandomSC().gen_random_sc()
+            GenRandomSC().gen_random_sc()
         logger.info("Get scripts from script folder: %s" % self.script_folder)
-        self.getScripts(self.script_folder)
         self.scripts = self.getScripts(self.script_folder)
         
         # Push binary and scripts onto device
