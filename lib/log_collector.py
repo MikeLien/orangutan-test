@@ -12,35 +12,35 @@ class LogCollector(object):
     def __init__(self, device, option):
         self.option = option
         self.strTime = time.strftime('%Y%m%d%H%M%S', time.localtime())
-        self.logFolder = 'logs/'+device+'_'+self.strTime
+        self.logFolder = 'logs/'+device+'_'+self.strTime+'/'
         if not os.path.exists(self.logFolder):
             os.makedirs(self.logFolder)
         pass
         ## TODO: add timer for pull logs regularly
 
     def log_b2g_ps(self, attach):
-        os.system('adb shell b2g-ps -t -p -P --oom > b2g-ps_' + attach + '.log')
+        os.system('adb shell b2g-ps -t -p -P --oom > ' + self.logFolder + 'b2g-ps_' + attach + '.log')
 
     def log_b2g_info(self, attach):
-        os.system('adb shell b2g-info -t > b2g-info_' + attach + '.log')
+        os.system('adb shell b2g-info -t > ' + self.logFolder + 'b2g-info_' + attach + '.log')
 
     def log_b2g_proprank(self, attach):
-        os.system('adb shell b2g-procrank --oom > b2g-procrank_' + attach + '.log')
+        os.system('adb shell b2g-procrank --oom > ' + self.logFolder + 'b2g-procrank_' + attach + '.log')
 
     def log_dumpstate(self, attach):
-        os.system('adb shell dumpstate > dumpstate_' + attach + '.log')
+        os.system('adb shell dumpstate > ' + self.logFolder + 'dumpstate_' + attach + '.log')
 
     def log_crash_report(self):
-        os.system('adb pull /data/b2g/Crash\ Reports' + self.logFolder)
+        os.system('adb pull /data/b2g/mozilla/Crash\ Reports ' + self.logFolder)
 
     def log_logcat(self, attach):
-        os.system('adb shell logcat -v threadtime -d > logcat_' + attach + '.log')
+        os.system('adb shell logcat -v threadtime -d > ' + self.logFolder + 'logcat_' + attach + '.log')
 
     def log_dmesg(self, attach):
-        os.system('adb shell dmesg > dmesg_' + attach + '.log')
+        os.system('adb shell dmesg > ' + self.logFolder + 'dmesg_' + attach + '.log')
 
     def log_get_event(self, attach):
-        os.system('adb shell getevent -S > getevent_' + attach + '.log')
+        os.system('adb shell getevent -S > ' + self.logFolder + 'getevent_' + attach + '.log')
 
     def getLogs(self):
         curTime = time.strftime('%m%d%H%M%S', time.localtime())
@@ -64,9 +64,9 @@ class LogCollector(object):
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         options = Parser.parser(sys.argv[1:])
-        print os.getcwd()
         if 'config' in options:
             config = {}
             with open(options.config) as f:
                 config = eval(f.read())
             log = LogCollector(config['device_name'], config['logs'])
+            log.getLogs()
