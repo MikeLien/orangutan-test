@@ -18,6 +18,8 @@
         "b2g-procrank": True,
         "dumpstate": True,
         "crash-report": True,
+        "dmesg": True,
+        "get-event": True,
         "period": 60
     }
 }
