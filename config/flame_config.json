@@ -1,8 +1,8 @@
 {
     "orangutan": "bin/orng",
     "script_repo": "script/flame_script/flame_0001/",
-    "script_amount": 3,
-    "script_steps": 1000,
+    "script_amount": 30,
+    "script_steps": 10000,
     "device_name": "flame",
     "resolution": "fwvga",
     "res_x": 480,
