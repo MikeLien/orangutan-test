@@ -64,7 +64,7 @@ class LogCollector(object):
         if self.option['crash-report']:
             self.log_crash_report()
 
-    def gen_report(self):
+    def genReport(self):
         report = open(self.logFolder+'report.html', 'w')
         for dir_path, dir_names, dir_files in os.walk(self.logFolder):
             for f in dir_files:
@@ -84,4 +84,4 @@ if __name__ == '__main__':
                 config = eval(f.read())
             log = LogCollector(config['device_name'], config['logs'])
             log.getLogs()
-            log.gen_report()
+            log.genReport()
