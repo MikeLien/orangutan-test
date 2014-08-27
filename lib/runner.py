@@ -71,13 +71,11 @@ class Runner(object):
                 logger.info("command: %s" % ' '.join(command))
                 self.currentProcess = subprocess.Popen(command)
                 self.currentProcess.wait()
-                if (self.scripts.index(script)+1)%3 and (self.scripts.index(script)+1) != len(self.scripts) and not self.forceStopped:
-                    continue
-                else:
-                    logger.info("Collect Logs")
+                if not self.scripts.index(script) % 3:
                     self.collectLog()
-        logger.info("Collect Crash Reports")
+        self.collectLog()
         self.collectCrash()
+        self.logCollector.genReport()
 
     def stopRunning(self, signum, frame):
         self.forceStopped = True
@@ -85,9 +83,11 @@ class Runner(object):
         logger.info("Force Stop")
 
     def collectLog(self):
+        logger.info("Collect Logs")
         self.logCollector.getLogs()
 
     def collectCrash(self):
+        logger.info("Collect Crash Reports")
         self.logCollector.getCrashReport()
         
 def load_config(config_repo):
@@ -116,6 +116,8 @@ def main(argv):
     except:
         logger.warn("Orangutan Test failed occasionally")
     signal.alarm(0)
+
+
 
     logger.info("Orangutan Test is Done at " + datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
 
