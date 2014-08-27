@@ -59,6 +59,8 @@ class LogCollector(object):
             self.log_dmesg(curTime)
         if self.option['get-event']:
             self.log_get_event(curTime)
+
+    def getCrashReport(self):
         if self.option['crash-report']:
             self.log_crash_report()
 
