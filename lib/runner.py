@@ -71,6 +71,13 @@ class Runner(object):
                 logger.info("command: %s" % ' '.join(command))
                 self.currentProcess = subprocess.Popen(command)
                 self.currentProcess.wait()
+                if (self.scripts.index(script)+1)%3 and (self.scripts.index(script)+1) != len(self.scripts) and not self.forceStopped:
+                    continue
+                else:
+                    logger.info("Collect Logs")
+                    self.collectLog()
+        logger.info("Collect Crash Reports")
+        self.collectCrash()
 
     def stopRunning(self, signum, frame):
         self.forceStopped = True
@@ -79,6 +86,9 @@ class Runner(object):
 
     def collectLog(self):
         self.logCollector.getLogs()
+
+    def collectCrash(self):
+        self.logCollector.getCrashReport()
         
 def load_config(config_repo):
     logger.info("Load config from %s" % config_repo)
