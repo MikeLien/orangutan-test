@@ -16,7 +16,7 @@ from log_collector import LogCollector
 from gen_randomsc import GenRandomSC 
 
 FORMAT = '%(asctime)-15s OrangutanTool %(message)s'
-logging.basicConfig(format=FORMAT, level=logging.DEBUG)
+logging.basicConfig(format=FORMAT, level=logging.INFO)
 logger = logging.getLogger( __name__ )
 
 class Runner(object):
@@ -56,7 +56,7 @@ class Runner(object):
                 if f.endswith(".sc"):
                     scripts.append(f)
                     self.device.pushScript(os.path.join(dir_path, f))
-                    logger.info("script %s is in queue now" % f)
+                    logger.debug("script %s is in queue now" % f)
         return scripts
 
     def run(self):
@@ -98,8 +98,8 @@ def load_config(config_repo):
     logger.debug("config %s" % config)
     return config
 
-def main(argv):
-    options = Parser.parser(argv)
+def main():
+    options = Parser.parser(sys.argv[1:])
     config = load_config(options.config)
 
     startTime = datetime.now()
@@ -123,6 +123,6 @@ def main(argv):
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
-        main(sys.argv[1:])
+        main()
     else:
         Parser.parser(["-h"])

@@ -4,7 +4,7 @@
 
 from setuptools import setup, find_packages
 
-PACKAGE_VERSION = '0.1'
+PACKAGE_VERSION = '0.9'
 
 # dependencies
 with open('requirements.txt') as f:
@@ -23,6 +23,4 @@ setup(name='orangutan-test',
       include_package_data=True,
       zip_safe=False,
       install_requires=deps,
-      entry_points={"console_scripts": ["runcertsuite = certsuite:harness_main",
-                                        "cert = certsuite:certcli",
-                                        "webapirunner = webapi_tests.runner:main"]})
+      entry_points={"console_scripts": ["monkey = lib.runner:main"]})
