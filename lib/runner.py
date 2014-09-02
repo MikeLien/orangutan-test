@@ -63,7 +63,7 @@ class Runner(object):
         orng = os.path.join('/data/', os.path.basename(self.config['orangutan']))
         command = ['adb', 'shell', orng, self.config['event'], 'script_place_holder']
 
-        logger.info("sciprt queue: %s" % self.scripts)
+        logger.debug("sciprt queue: %s" % self.scripts)
         for script in self.scripts:
             if not self.forceStopped:
                 logger.info("Trigger Script: " + script)
@@ -77,10 +77,13 @@ class Runner(object):
         self.collectCrash()
         self.logCollector.genReport()
 
-    def stopRunning(self, signum, frame):
+    def stopRunning(self, signum=None, frame=None):
         self.forceStopped = True
         self.currentProcess.terminate()
         logger.info("Force Stop")
+        self.collectLog()
+        self.collectCrash()
+        self.logCollector.genReport()
 
     def collectLog(self):
         logger.info("Collect Logs")
@@ -99,30 +102,43 @@ def load_config(config_repo):
     return config
 
 def main():
+    if len(sys.argv) == 1:
+        Parser.parser(["-h"])
+        return
+
     options = Parser.parser(sys.argv[1:])
     config = load_config(options.config)
 
     startTime = datetime.now()
     logger.info("Starting " + startTime.strftime("%Y/%m/%d %H:%M:%S"))
-    runningTime = timedelta(hours=config['execution_time']).total_seconds()
-    logger.info("Running Time: %d " % runningTime)
+    if not config['execution_time'] == 0:
+        runningTime = timedelta(hours=config['execution_time']).total_seconds()
+        logger.info("Running Time: %d " % runningTime)
 
-    runner = Runner(config, options)
-    signal.signal(signal.SIGALRM, runner.stopRunning)
-    signal.alarm(int(runningTime))
+        runner = Runner(config, options)
+        signal.signal(signal.SIGALRM, runner.stopRunning)
+        signal.alarm(int(runningTime))
 
-    try:
-        runner.run()
-    except:
-        logger.warn("Orangutan Test failed occasionally")
-    signal.alarm(0)
-
+        try:
+            runner.run()
+        except:
+            logger.warn("Orangutan Test failed occasionally")
+        signal.alarm(0)
+    else:
+        logger.info("Runnining Time: Infinity")
+        try:
+            logger.info("Press Control + C to force stop")
+            while True:
+                runner = Runner(config, options)
+                runner.run()
+        except KeyboardInterrupt:
+            logger.info("Receive keyboard interrupt to force stop")
+            runner.stopRunning()
+        except:
+            logger.warn("Orangutan Test failed unexpectedly")
 
 
     logger.info("Orangutan Test is Done at " + datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
 
 if __name__ == '__main__':
-    if len(sys.argv) > 1:
-        main()
-    else:
-        Parser.parser(["-h"])
+    main()
