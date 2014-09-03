@@ -5,6 +5,7 @@
 import sys
 import os
 import time
+import subprocess
 from argparser import Parser
 
 class LogCollector(object):
@@ -59,6 +60,13 @@ class LogCollector(object):
             self.log_dmesg(curTime)
         if self.option['get-event']:
             self.log_get_event(curTime)
+
+    def checkCrashReport(self):
+        try:
+            r = subprocess.check_output('adb shell ls -al /data/b2g/mozilla/Crash\ Reports | grep LastCrash', shell=True)
+        except:
+            return False, None
+        return True, r[38:54]
 
     def getCrashReport(self):
         if self.option['crash-report']:
