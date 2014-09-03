@@ -15,7 +15,7 @@ from argparser import Parser
 from log_collector import LogCollector
 from gen_randomsc import GenRandomSC 
 
-FORMAT = '%(asctime)-15s OrangutanTool %(message)s'
+FORMAT = '%(asctime)-15s OrangutanTool %(levelname)s: %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.INFO)
 logger = logging.getLogger( __name__ )
 
@@ -59,7 +59,7 @@ class Runner(object):
                     logger.debug("script %s is in queue now" % f)
         return scripts
 
-    def run(self):
+    def run(self, infinity=False):
         orng = os.path.join('/data/', os.path.basename(self.config['orangutan']))
         command = ['adb', 'shell', orng, self.config['event'], 'script_place_holder']
 
@@ -71,6 +71,13 @@ class Runner(object):
                 logger.info("command: %s" % ' '.join(command))
                 self.currentProcess = subprocess.Popen(command)
                 self.currentProcess.wait()
+                if infinity:
+                    logger.info("check crash")
+                    crash, crashTime = self.logCollector.checkCrashReport()
+                    if crash:
+                        logger.critical("Crashed at: %s" % crashTime)
+                        self.forceStopped = True
+                        break
                 if not self.scripts.index(script) % 3:
                     self.collectLog()
         self.collectLog()
@@ -81,6 +88,7 @@ class Runner(object):
         self.forceStopped = True
         self.currentProcess.terminate()
         logger.info("Force Stop")
+        os.system('adb shell ps | grep orng | awk "{print $2}" | xargs adb shell kill')
         self.collectLog()
         self.collectCrash()
         self.logCollector.genReport()
@@ -130,7 +138,9 @@ def main():
             logger.info("Press Control + C to force stop")
             while True:
                 runner = Runner(config, options)
-                runner.run()
+                runner.run(infinity=True)
+                if runner.forceStopped:
+                    break
         except KeyboardInterrupt:
             logger.info("Receive keyboard interrupt to force stop")
             runner.stopRunning()
