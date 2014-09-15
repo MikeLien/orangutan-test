@@ -29,8 +29,8 @@ To start orangutan test, use the command:
 ```
 $ python lib/runner.py --config config/template.json
 ```
-Or generate random script by giving ```--gen_scripts True```
+Or generate random script by giving ```--gen-scripts True```
 ```
-$ python lib/runner.py --gen_scripts True --config config/template.json
+$ python lib/runner.py --gen-scripts True --config config/template.json
 ```
 
