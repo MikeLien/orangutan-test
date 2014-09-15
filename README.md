@@ -21,7 +21,7 @@ $ python lib/gen_randomsc.py --config config/template.json
 ```
 or, give the parameters directly
 ```
-$ python lib/gen_randomsc.py --gen_scripts_amount 10 --gen_scripts_steps 10000 --gen_scripts_output scripts/sample/
+$ python lib/gen_randomsc.py --gen-scripts-amount 10 --gen-scripts-steps 10000 --gen-scripts-output scripts/sample/
 ```
 
 ### Execution
