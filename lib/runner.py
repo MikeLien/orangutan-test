@@ -88,7 +88,7 @@ class Runner(object):
         self.forceStopped = True
         self.currentProcess.terminate()
         logger.info("Force Stop")
-        os.system('adb shell ps | grep orng | awk "{print $2}" | xargs adb shell kill')
+        os.system("adb shell ps | grep orng | awk '{print $2}' | xargs adb shell kill")
         self.collectLog()
         self.collectCrash()
         self.logCollector.genReport()
