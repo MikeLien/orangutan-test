@@ -61,7 +61,11 @@ class Runner(object):
 
     def run(self, infinity=False):
         orng = os.path.join('/data/', os.path.basename(self.config['orangutan']))
-        command = ['adb', 'shell', orng, self.config['event'], 'script_place_holder']
+        command = ['adb', 'shell', orng, self.config['tevent']+'$'+
+                                            self.config['hevent']+'$'+
+                                            self.config['pevent']+'$'+
+                                            self.config['vuevent']+'$'+
+                                            self.config['vdevent'], 'script_place_holder']
 
         logger.debug("sciprt queue: %s" % self.scripts)
         for script in self.scripts:
