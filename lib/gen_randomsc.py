@@ -36,7 +36,8 @@ class GenRandomSC(object):
 					"swipe_left", "swipe_right",
 					"tap", "double_tap", "long_tap",
 					"drag", "pinch", "sleep",
-					"tap_home", "long_tap_home"]
+					"tap_home", "long_tap_home",
+					"vol_up", "vol_down"]
 		orig_workdir = getcwd()
 		for each_folder in self.script_repo.split('/'):
 			if each_folder:
@@ -131,6 +132,12 @@ class GenRandomSC(object):
 	def get_homekey_event(self, letency):
 		return "keydown 102\n" + self.get_sleep_event(float(letency)/1000) + "\nkeyup 102"
 
+	def get_volup_event(self, letency):
+		return "keydown 115\n" + self.get_sleep_event(float(letency)/1000) + "\nkeyup 115"
+
+	def get_voldown_event(self, letency):
+		return "keydown 114\n" + self.get_sleep_event(float(letency)/1000) + "\nkeyup 114"
+
 	def get_cmd_events(self, cmd):
 		use_default = int(random.random()*10)%2
 		short_latency = self.get_short_latency()
@@ -188,6 +195,10 @@ class GenRandomSC(object):
 			cmdevents = self.get_homekey_event(self.short_steps_duration)
 		elif cmd == "long_tap_home":
 			cmdevents = self.get_homekey_event(self.long_steps_duration)
+		elif cmd == "vol_up":
+			cmdevents = self.get_volup_event(self.short_steps_duration)
+		elif cmd == "vol_down":
+			cmdevents = self.get_voldown_event(self.short_steps_duration)
 		else:
 			raise Exception("Unknown command")
 
