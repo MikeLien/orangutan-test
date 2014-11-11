@@ -13,7 +13,7 @@ class GenRandomSC(object):
 		self.amount = amount
 		self.steps = steps
 		self.deviceName = deviceName
-		self.range_action_steps = 10
+		self.range_action_steps = 20
 		self.short_steps_duration = 200
 		self.long_steps_duration = 2000
 		self.range_sleep = 5.0
@@ -35,7 +35,7 @@ class GenRandomSC(object):
 		cmd_list=["scroll_down", "scroll_up",
 					"swipe_left", "swipe_right",
 					"tap", "double_tap", "long_tap",
-					"drag", "pinch", "sleep",
+					"drag", "pinch",
 					"tap_home", "long_tap_home",
 					"vol_up", "vol_down"]
 		orig_workdir = getcwd()
@@ -55,7 +55,9 @@ class GenRandomSC(object):
 					continue
 				random_cmd = random.choice(cmd_list)
 				output_file.write(self.get_cmd_events(random_cmd)+'\n')
-				if random_cmd is "tap_home" or random_cmd is "long_tap_home": skip_count=2
+				if random_cmd is "tap_home" or random_cmd is "long_tap_home" or \
+						random_cmd is "vol_up" or random_cmd is "vol_down":
+					skip_count=2
 				output_file.write(self.get_sleep_event(self.get_sleep_time(shortest=0.5))+'\n')
 			output_file.close()
 		chdir(orig_workdir)
